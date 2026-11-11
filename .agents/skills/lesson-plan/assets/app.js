@@ -135,9 +135,9 @@
   }
 
   /**
-   * បំបែកជួរតារាង (<tr>) ដែលវែងជាង ១ ទំព័រពេញ ឱ្យដាច់ជា ២ ផ្នែកយ៉ាងស្អាតដោយមិនបាត់អត្ថបទ
+   * បំបែកជួរតារាង (<tr>) ឱ្យពេញទំព័របច្ចុប្បន្នជាមុនសិន ទើបបន្តផ្នែកនៅសល់ទៅទំព័របន្ទាប់ដោយមិនខ្ជះខ្ជាយក្រដាស
    */
-  function splitOversizedRow(row, currentTbody, currentBody, maxBodyHeight) {
+  function splitOversizedRow(row, currentTbody, currentBody, maxBodyHeight, allowForceFirst) {
     const part1Row = document.createElement('tr');
     const part2Row = document.createElement('tr');
 
@@ -176,41 +176,46 @@
         } else {
           dst1.removeChild(candidate);
 
-          // If this child is a <ul>/<ol> list, try splitting individual <li> items
-          if (
+          // Split <ul>/<ol> lists OR multi-div .math-box containers item-by-item
+          const isSplittableContainer =
             node.nodeType === Node.ELEMENT_NODE &&
-            (node.tagName === 'UL' || node.tagName === 'OL')
-          ) {
-            const list1 = node.cloneNode(false);
-            const list2 = node.cloneNode(false);
-            dst1.appendChild(list1);
+            (node.tagName === 'UL' ||
+              node.tagName === 'OL' ||
+              (node.tagName === 'DIV' &&
+                node.classList.contains('math-box') &&
+                node.children.length > 1));
+
+          if (isSplittableContainer) {
+            const box1 = node.cloneNode(false);
+            const box2 = node.cloneNode(false);
+            dst1.appendChild(box1);
 
             const items = Array.from(node.children);
-            let listOverflowed = false;
-            items.forEach((li) => {
-              if (listOverflowed) {
-                list2.appendChild(li.cloneNode(true));
+            let subOverflowed = false;
+            items.forEach((item) => {
+              if (subOverflowed) {
+                box2.appendChild(item.cloneNode(true));
                 return;
               }
-              const liClone = li.cloneNode(true);
-              list1.appendChild(liClone);
+              const itemClone = item.cloneNode(true);
+              box1.appendChild(itemClone);
               if (currentBody.offsetHeight <= maxBodyHeight) {
                 placedAnything = true;
               } else {
-                list1.removeChild(liClone);
-                listOverflowed = true;
-                list2.appendChild(li.cloneNode(true));
+                box1.removeChild(itemClone);
+                subOverflowed = true;
+                box2.appendChild(item.cloneNode(true));
               }
             });
 
-            if (list1.children.length === 0) {
-              dst1.removeChild(list1);
+            if (box1.children.length === 0) {
+              dst1.removeChild(box1);
             }
-            if (list2.children.length > 0) {
-              dst2.appendChild(list2);
+            if (box2.children.length > 0) {
+              dst2.appendChild(box2);
             }
-          } else if (!placedAnything && colIdx === 0 && i === 0) {
-            // Failsafe: guarantee progress if a single atomic block exceeds maxBodyHeight
+          } else if (allowForceFirst && !placedAnything && colIdx === 0 && i === 0) {
+            // Failsafe on an empty sheet: guarantee forward progress
             dst1.appendChild(candidate);
             placedAnything = true;
           } else {
@@ -220,17 +225,48 @@
           overflowedCol = true;
         }
       }
+
+      // Avoid leaving any trailing sub-heading (<p><strong>...</strong></p> or .phase-5e-badge) orphaned at the bottom of a cell
+      while (
+        !allowForceFirst &&
+        dst1.children.length >= 1 &&
+        dst2.children.length > 0
+      ) {
+        const lastEl = dst1.lastElementChild;
+        const isTrailingHeading =
+          lastEl &&
+          !lastEl.classList.contains('dots-line') &&
+          (lastEl.classList.contains('phase-5e-badge') ||
+            (lastEl.tagName === 'P' &&
+              Boolean(lastEl.querySelector('strong')) &&
+              lastEl.textContent.trim().length < 70));
+        if (!isTrailingHeading) break;
+        dst1.removeChild(lastEl);
+        dst2.insertBefore(lastEl, dst2.firstChild);
+      }
     });
+
+    const contentColIdx = srcCells.length > 1 ? 1 : 0;
+    const contentColHasText =
+      part1Row.children[contentColIdx] &&
+      part1Row.children[contentColIdx].textContent.trim().length > 0;
+
+    if (!placedAnything || (!allowForceFirst && !contentColHasText)) {
+      if (part1Row.parentNode === currentTbody) {
+        currentTbody.removeChild(part1Row);
+      }
+      return { placed: false, leftover: null };
+    }
 
     const hasRemaining = Array.from(part2Row.children).some(
       (td) => td.childNodes.length > 0 && td.textContent.trim().length > 0
     );
 
-    return hasRemaining ? part2Row : null;
+    return { placed: true, leftover: hasRemaining ? part2Row : null };
   }
 
   /**
-   * បំបែកឯកសារទាំងមូលទៅជាសន្លឹកក្រដាស A4 ផ្ដេកដាច់ៗពីគ្នា (100% ដូចពេលបោះពុម្ព Print/PDF)
+   * បំបែកឯកសារទាំងមូលទៅជាសន្លឹកក្រដាស A4 ផ្ដេកដាច់ៗពីគ្នា និងប្រើប្រាស់ផ្ទៃក្រដាសឱ្យអស់លទ្ធភាព (100% ដូចពេលបោះពុម្ព Print/PDF)
    */
   function paginateDocument() {
     if (editMode) return;
@@ -245,6 +281,7 @@
 
     stackEl.innerHTML = '';
     let pageCtx = createBlankSheet();
+    const MIN_REMAINING_SPLIT_PX = 48;
 
     const topElements = Array.from(masterContainer.children);
 
@@ -328,7 +365,7 @@
           const row = rowQueue.shift();
           const isStepBanner = Boolean(row.querySelector('.step-banner-cell'));
 
-          // Prevent orphan Step Banner: always pair Step Banner with its first content row
+          // Prevent orphan Step Banner while still filling current sheet whenever possible
           if (isStepBanner && rowQueue.length > 0 && !rowQueue[0].querySelector('.step-banner-cell')) {
             const firstContentRow = rowQueue.shift();
             const activeTbl = ensureTable();
@@ -340,12 +377,33 @@
               continue;
             }
 
-            // Didn't fit together on current sheet
+            // Full firstContentRow didn't fit — check if banner + part of firstContentRow can fill current sheet!
             activeTbl.tbody.removeChild(firstContentRow);
+            if (
+              pageCtx.body.offsetHeight <= pageCtx.maxBodyHeight &&
+              pageCtx.maxBodyHeight - pageCtx.body.offsetHeight >= MIN_REMAINING_SPLIT_PX
+            ) {
+              const splitOnCurr = splitOversizedRow(
+                firstContentRow,
+                activeTbl.tbody,
+                pageCtx.body,
+                pageCtx.maxBodyHeight,
+                false
+              );
+              if (splitOnCurr.placed) {
+                if (splitOnCurr.leftover) {
+                  rowQueue.unshift(splitOnCurr.leftover);
+                  pageCtx = createBlankSheet();
+                  tblCtx = null;
+                }
+                continue;
+              }
+            }
+
+            // Otherwise move banner + firstContentRow together to a fresh sheet
             activeTbl.tbody.removeChild(row);
             discardEmptyTable();
 
-            // If current sheet already had content, start a fresh sheet and retry
             if (pageCtx.body.children.length > 0) {
               pageCtx = createBlankSheet();
               tblCtx = null;
@@ -359,24 +417,24 @@
               continue;
             }
 
-            // Even on a fresh sheet, banner + huge content row exceeds 1 page:
-            // Keep banner on this fresh sheet and split firstContentRow cleanly!
+            // Even on a fresh sheet, banner + huge content row exceeds 1 page: split cleanly
             freshTbl.tbody.removeChild(firstContentRow);
-            const leftover = splitOversizedRow(
+            const splitFresh = splitOversizedRow(
               firstContentRow,
               freshTbl.tbody,
               pageCtx.body,
-              pageCtx.maxBodyHeight
+              pageCtx.maxBodyHeight,
+              true
             );
-            if (leftover) {
-              rowQueue.unshift(leftover);
+            if (splitFresh.leftover) {
+              rowQueue.unshift(splitFresh.leftover);
             }
             pageCtx = createBlankSheet();
             tblCtx = null;
             continue;
           }
 
-          // Standard content row
+          // Standard content row: try fitting whole row on current sheet first
           const activeTbl = ensureTable();
           activeTbl.tbody.appendChild(row);
 
@@ -384,8 +442,29 @@
             continue;
           }
 
-          // Row overflowed current sheet
+          // Whole row overflowed current sheet — try splitting row to fill remaining space on current sheet first!
           activeTbl.tbody.removeChild(row);
+          if (
+            pageCtx.body.offsetHeight <= pageCtx.maxBodyHeight &&
+            pageCtx.maxBodyHeight - pageCtx.body.offsetHeight >= MIN_REMAINING_SPLIT_PX
+          ) {
+            const splitCurr = splitOversizedRow(
+              row,
+              activeTbl.tbody,
+              pageCtx.body,
+              pageCtx.maxBodyHeight,
+              false
+            );
+            if (splitCurr.placed) {
+              if (splitCurr.leftover) {
+                rowQueue.unshift(splitCurr.leftover);
+                pageCtx = createBlankSheet();
+                tblCtx = null;
+              }
+              continue;
+            }
+          }
+
           discardEmptyTable();
 
           if (pageCtx.body.children.length > 0) {
@@ -402,14 +481,15 @@
 
           // Row alone exceeds a full blank sheet -> split across sheets
           freshTbl.tbody.removeChild(row);
-          const leftover = splitOversizedRow(
+          const splitFresh = splitOversizedRow(
             row,
             freshTbl.tbody,
             pageCtx.body,
-            pageCtx.maxBodyHeight
+            pageCtx.maxBodyHeight,
+            true
           );
-          if (leftover) {
-            rowQueue.unshift(leftover);
+          if (splitFresh.leftover) {
+            rowQueue.unshift(splitFresh.leftover);
             pageCtx = createBlankSheet();
             tblCtx = null;
           }
@@ -640,27 +720,29 @@
       @page WordSection1 {
         size: 841.9pt 595.3pt;
         mso-page-orientation: landscape;
-        margin: 36.8pt 39.7pt 39.7pt 51.0pt;
-        mso-header-margin: 35.4pt;
-        mso-footer-margin: 35.4pt;
+        margin: 28.3pt 36.8pt 32.6pt 42.5pt;
+        mso-header-margin: 28.3pt;
+        mso-footer-margin: 28.3pt;
       }
       div.WordSection1 { page: WordSection1; }
       body {
         font-family: "Khmer OS Siemreap", "Hanuman", serif;
-        font-size: 10.5pt;
+        font-size: 9.4pt;
         color: #000000;
-        line-height: 1.55;
+        line-height: 1.46;
       }
       .kingdom-motto, .doc-title-block { text-align: center; }
-      .muol-heading, .doc-main-title, .sig-role-muol {
+      .muol-heading, .doc-main-title, .school-admin-block, .meta-muol, .sig-approval-muol, .sig-role-muol {
         font-family: "Khmer OS Muol Light", "Moul", serif;
         font-weight: normal;
       }
+      .school-admin-block { font-size: 9.2pt; line-height: 1.6; }
+      .doc-main-title { font-size: 10.6pt; }
       .doc-sub-title { font-style: italic; text-align: center; }
-      .meta-section { margin-left: 22.7pt; margin-bottom: 10pt; }
+      .meta-section { margin-left: 68pt; margin-bottom: 7pt; }
       table.meta-table { width: 100%; border-collapse: collapse; border: none; table-layout: fixed; }
-      table.meta-table td { border: none; padding: 1.5pt 0; vertical-align: top; font-family: "Khmer OS Siemreap", "Hanuman", serif; font-size: 10.2pt; }
-      table.meta-table td.meta-label-cell { width: 147.4pt; font-weight: bold; white-space: nowrap; padding-right: 6pt; }
+      table.meta-table td { border: none; padding: 1pt 0; vertical-align: top; font-family: "Khmer OS Siemreap", "Hanuman", serif; font-size: 9.4pt; }
+      table.meta-table td.meta-label-cell { width: 136pt; font-weight: bold; white-space: nowrap; padding-right: 6pt; }
       table.meta-table tr.meta-sub-row td.meta-label-cell { padding-left: 17pt; }
       .meta-colon { font-weight: bold; margin-right: 3pt; }
       table.lesson-table {
@@ -671,56 +753,59 @@
         mso-yfti-tbllook: 1184;
       }
       table.lesson-table thead { display: table-header-group; }
-      table.lesson-table tr { page-break-inside: avoid; }
+      table.lesson-table tr { page-break-inside: auto; }
       table.lesson-table th, table.lesson-table td {
         border: 1pt solid #000000;
-        padding: 5pt 6pt;
+        padding: 3.8pt 5.5pt;
         vertical-align: top;
         font-family: "Khmer OS Siemreap", "Hanuman", serif;
-        font-size: 10.2pt;
+        font-size: 9.3pt;
       }
       table.lesson-table thead th {
         font-family: "Khmer OS Muol Light", "Moul", serif;
         font-weight: normal;
+        font-size: 9.2pt;
         text-align: center;
         background: #F2F2F2;
       }
       .step-banner-cell {
         font-family: "Khmer OS Muol Light", "Moul", serif;
         font-weight: normal;
+        font-size: 9.2pt;
         text-align: center;
         background: #F9F9F9;
+        page-break-after: avoid;
       }
       .step-duration {
         font-family: "Khmer OS Siemreap", "Hanuman", serif;
         font-weight: bold;
       }
       .phase-5e-badge { font-weight: bold; text-decoration: underline; }
-      .math-box { border: 0.75pt solid #222222; padding: 5pt 7pt; margin: 4pt 0; background: #FCFCFC; }
+      .math-box { border: 0.75pt solid #222222; padding: 4pt 6pt; margin: 3pt 0; background: #FCFCFC; }
       .word-math-inline {
         font-family: "Cambria Math", "Times New Roman", serif;
-        font-size: 10.8pt;
+        font-size: 9.8pt;
       }
       .word-math-display {
         font-family: "Cambria Math", "Times New Roman", serif;
-        font-size: 11.2pt;
+        font-size: 10.2pt;
         text-align: center;
-        margin: 5pt 0;
+        margin: 4pt 0;
         font-weight: normal;
       }
       .word-mtext {
         font-family: "Khmer OS Siemreap", "Hanuman", serif;
       }
-      table.layout-pair-table { width: 100%; border-collapse: collapse; border: none; margin: 3pt 0; }
-      table.layout-pair-table > tbody > tr > td { border: none; padding: 2pt 4pt; vertical-align: top; width: 50%; }
-      table.potence-table { border-collapse: collapse; border: none; margin: 4pt 0; }
-      table.potence-table td { border: none; padding: 1.5pt 5pt; font-family: "Cambria Math", "Times New Roman", serif; }
+      table.layout-pair-table { width: 100%; border-collapse: collapse; border: none; margin: 2pt 0; }
+      table.layout-pair-table > tbody > tr > td { border: none; padding: 1.5pt 4pt; vertical-align: top; width: 50%; }
+      table.potence-table { border-collapse: collapse; border: none; margin: 3pt 0; }
+      table.potence-table td { border: none; padding: 1pt 4pt; font-family: "Cambria Math", "Times New Roman", serif; font-size: 9.3pt; }
       table.potence-table td.pot-left { text-align: right; border-right: 1pt solid #000000; }
       table.potence-table td.pot-divisor { text-align: left; border-bottom: 1pt solid #000000; font-weight: bold; }
       table.potence-table td.pot-quotient { text-align: left; font-weight: bold; }
       .potence-sub { border-bottom: 0.75pt solid #000000; }
-      .reflection-box { border: 1pt solid #000000; padding: 6pt 8pt; margin-top: 10pt; }
-      .signature-table { width: 100%; border: none; margin-top: 14pt; text-align: center; }
+      .reflection-box { border: 1pt solid #000000; padding: 4.5pt 7pt; margin-top: 7pt; font-size: 9.3pt; }
+      .signature-table { width: 100%; border: none; margin-top: 9pt; text-align: center; font-size: 9.2pt; }
       .signature-table td { border: none; width: 50%; text-align: center; vertical-align: top; }
     `;
 

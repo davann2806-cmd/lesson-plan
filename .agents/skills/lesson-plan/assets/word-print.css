@@ -27,8 +27,8 @@ body {
   background-color: var(--desk-bg);
   color: var(--ink-black);
   font-family: var(--font-body);
-  font-size: 10.5pt;
-  line-height: 1.58;
+  font-size: 9.4pt;
+  line-height: 1.48;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -172,7 +172,7 @@ body {
   height: 210mm;
   background: var(--paper-bg);
   color: var(--ink-black);
-  padding: 13mm 14mm 14mm 18mm;
+  padding: 10mm 13mm 11.5mm 15mm;
   border: 1px solid rgba(15, 23, 42, 0.15);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2), 0 1px 3px rgba(15, 23, 42, 0.14);
   position: relative;
@@ -198,27 +198,27 @@ body {
   padding: 6px 12px;
   margin-bottom: 4mm;
   border-radius: 4px;
-  font-size: 10pt;
+  font-size: 9.5pt;
   text-align: center;
 }
 
 /* Official Word-style bottom margin page counter */
 .page-footer {
   position: absolute;
-  bottom: 4.5mm;
-  left: 18mm;
-  right: 14mm;
+  bottom: 3.5mm;
+  left: 15mm;
+  right: 13mm;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 9pt;
+  font-size: 8.4pt;
   color: #374151;
   pointer-events: none;
 }
 
 .page-footer-label {
   opacity: 0.75;
-  font-size: 8.5pt;
+  font-size: 8pt;
 }
 
 .page-footer-num {
@@ -242,30 +242,32 @@ body {
    -------------------------------------------------------------------------- */
 .kingdom-motto {
   text-align: center;
-  margin-bottom: 1.5mm;
+  margin-bottom: 1mm;
 }
 
 .muol-heading {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 11pt;
-  line-height: 1.7;
+  font-size: 10pt;
+  line-height: 1.62;
   margin: 0;
   letter-spacing: 0.01em;
 }
 
 .tacteing-ornament {
   display: block;
-  margin: 0.8mm auto 1.5mm;
-  width: 92px;
-  height: 13px;
+  margin: 0.5mm auto 1mm;
+  width: 84px;
+  height: 11px;
 }
 
 .school-admin-block {
-  margin-top: -5mm;
-  margin-bottom: 2mm;
-  font-size: 10pt;
-  line-height: 1.58;
+  margin-top: -4.5mm;
+  margin-bottom: 1.2mm;
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 9.2pt;
+  line-height: 1.62;
 }
 
 .school-admin-block p {
@@ -274,20 +276,20 @@ body {
 
 .doc-title-block {
   text-align: center;
-  margin: 1.5mm 0 3.5mm;
+  margin: 0.8mm 0 2.2mm;
 }
 
 .doc-main-title {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 12pt;
+  font-size: 10.6pt;
   margin: 0;
-  line-height: 1.75;
+  line-height: 1.65;
 }
 
 .doc-sub-title {
   margin: 0;
-  font-size: 10pt;
+  font-size: 9.2pt;
   font-style: italic;
 }
 
@@ -295,9 +297,9 @@ body {
    Indented Metadata Header with Vertically Aligned "៖" (សញ្ញាភ្នែកមាន់ស្មើជួរគ្នា)
    -------------------------------------------------------------------------- */
 .meta-section {
-  margin: 0 0 3.5mm 8mm;
-  font-size: 10.2pt;
-  line-height: 1.56;
+  margin: 0 0 2.4mm 24mm;
+  font-size: 9.4pt;
+  line-height: 1.46;
 }
 
 .meta-table {
@@ -308,7 +310,7 @@ body {
 }
 
 .meta-table col.meta-col-label {
-  width: 52mm;
+  width: 48mm;
 }
 
 .meta-table col.meta-col-value {
@@ -317,7 +319,7 @@ body {
 
 .meta-table td {
   border: none !important;
-  padding: 0.45mm 0 !important;
+  padding: 0.28mm 0 !important;
   vertical-align: top;
 }
 
@@ -325,6 +327,12 @@ body {
   font-weight: 700;
   white-space: nowrap;
   padding-right: 2mm !important;
+}
+
+.meta-muol {
+  font-family: var(--font-muol);
+  font-weight: 400 !important;
+  font-size: 9.2pt;
 }
 
 .meta-table tr.meta-sub-row td.meta-label-cell {
@@ -348,14 +356,14 @@ body {
   border-collapse: collapse;
   border: 1pt solid #000000;
   table-layout: fixed;
-  font-size: 10.2pt;
-  line-height: 1.55;
+  font-size: 9.3pt;
+  line-height: 1.45;
 }
 
 .lesson-table th,
 .lesson-table td {
   border: 1pt solid #000000;
-  padding: 2mm 2.6mm;
+  padding: 1.3mm 2.1mm;
   vertical-align: top;
   word-wrap: break-word;
 }
@@ -376,27 +384,27 @@ body {
 .lesson-table thead th {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.2pt;
+  font-size: 9.2pt;
   text-align: center;
   vertical-align: middle;
   background-color: #f3f4f6;
-  padding: 2.3mm 2mm;
+  padding: 1.6mm 1.8mm;
 }
 
 /* Major Step Banner Row — Strictly CENTERED */
 .step-banner-cell {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.2pt;
+  font-size: 9.2pt;
   background-color: #f9fafb;
   text-align: center !important;
-  padding: 2mm 3mm !important;
+  padding: 1.4mm 2.5mm !important;
 }
 
 .step-duration {
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 10.2pt;
+  font-size: 9.2pt;
   margin-left: 4px;
 }
 
@@ -404,48 +412,52 @@ body {
 .phase-5e-badge {
   display: block;
   font-weight: 700;
-  margin-bottom: 1mm;
+  margin-bottom: 0.7mm;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 2.5px;
 }
 
 .cell-list {
   margin: 0;
-  padding-left: 4.5mm;
+  padding-left: 4.2mm;
 }
 
 .cell-list li {
-  margin-bottom: 0.8mm;
+  margin-bottom: 0.45mm;
 }
 
 .dots-line {
-  letter-spacing: 0.4px;
+  letter-spacing: 0.35px;
   color: #111111;
 }
 
 .math-box {
   border: 0.75pt solid #222222;
   background-color: #fcfcfc;
-  padding: 1.8mm 2.8mm;
-  margin: 1.2mm 0;
+  padding: 1.3mm 2.2mm;
+  margin: 0.9mm 0;
+}
+
+.math-box > div + div {
+  margin-top: 1mm;
 }
 
 .math-formula {
   font-family: 'KaTeX_Main', var(--font-math);
   text-align: center;
-  font-size: 11pt;
-  margin: 1.2mm 0;
+  font-size: 10pt;
+  margin: 1mm 0;
 }
 
 /* Publication-Grade LaTeX (KaTeX Computer Modern) Typography */
 .katex {
-  font-size: 1.06em !important;
+  font-size: 1.03em !important;
   color: #000000;
-  line-height: 1.22;
+  line-height: 1.2;
 }
 
 .katex-display {
-  margin: 1.6mm 0 !important;
+  margin: 1.1mm 0 !important;
   overflow-x: auto;
   overflow-y: hidden;
   page-break-inside: avoid;
@@ -453,7 +465,7 @@ body {
 }
 
 .katex-display > .katex {
-  font-size: 1.1em !important;
+  font-size: 1.06em !important;
 }
 
 .katex .mtext {
@@ -465,12 +477,12 @@ body {
   width: 100%;
   border-collapse: collapse;
   border: none !important;
-  margin: 1mm 0;
+  margin: 0.6mm 0;
 }
 
 .layout-pair-table > tbody > tr > td {
   border: none !important;
-  padding: 0.8mm 2mm !important;
+  padding: 0.5mm 1.6mm !important;
   vertical-align: top;
   width: 50%;
 }
@@ -480,13 +492,13 @@ body {
   border: none !important;
   width: auto !important;
   font-family: var(--font-math);
-  font-size: 10.2pt;
-  line-height: 1.3;
+  font-size: 9.3pt;
+  line-height: 1.25;
 }
 
 .potence-table td {
   border: none !important;
-  padding: 0.5mm 1.8mm !important;
+  padding: 0.35mm 1.5mm !important;
   white-space: nowrap;
 }
 
@@ -509,32 +521,32 @@ body {
 .potence-sub {
   border-bottom: 0.75pt solid #000000;
   display: inline-block;
-  min-width: 24px;
+  min-width: 22px;
 }
 
 /* --------------------------------------------------------------------------
    Post-Table Reflection & Formal Signature Block
    -------------------------------------------------------------------------- */
 .reflection-box {
-  margin-top: 3.5mm;
+  margin-top: 2mm;
   border: 1pt solid #000000;
-  padding: 2.2mm 3.2mm;
-  font-size: 10.2pt;
+  padding: 1.3mm 2.6mm;
+  font-size: 9.2pt;
   page-break-inside: avoid;
 }
 
 .reflection-title {
   font-weight: 700;
-  margin: 0 0 0.8mm 0;
+  margin: 0 0 0.4mm 0;
 }
 
 .signature-table {
   width: 100%;
   border-collapse: collapse;
   border: none;
-  margin-top: 5mm;
-  font-size: 10.2pt;
-  line-height: 1.6;
+  margin-top: 2.2mm;
+  font-size: 9.2pt;
+  line-height: 1.48;
   page-break-inside: avoid;
 }
 
@@ -543,18 +555,25 @@ body {
   border: none;
   text-align: center;
   vertical-align: top;
-  padding: 0 3mm;
+  padding: 0 2mm;
+}
+
+.sig-approval-muol {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 9.2pt;
+  margin-bottom: 0.3mm;
 }
 
 .sig-role-muol {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.2pt;
-  margin-top: 1.2mm;
+  font-size: 9.2pt;
+  margin-top: 0.6mm;
 }
 
 .sig-space {
-  height: 16mm;
+  height: 11.5mm;
 }
 
 /* --------------------------------------------------------------------------
@@ -602,7 +621,7 @@ body {
   .a4-page {
     width: 297mm !important;
     height: 209.6mm !important;
-    padding: 13mm 14mm 14mm 18mm !important;
+    padding: 10mm 13mm 11.5mm 15mm !important;
     margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
