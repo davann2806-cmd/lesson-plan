@@ -99,7 +99,7 @@
     const footer = document.createElement('footer');
     footer.className = 'page-footer';
     footer.innerHTML =
-      '<span class="page-footer-label">កិច្ចតែងការបង្រៀនគណិតវិទ្យា (សិស្សមជ្ឈមណ្ឌល &amp; 5E)</span>' +
+      '<span class="page-footer-label">កិច្ចតែងការបង្រៀន — អនុវិទ្យាល័យព្រះក្រសាំង</span>' +
       '<span class="page-footer-num"></span>';
     sheet.appendChild(footer);
 
@@ -251,7 +251,7 @@
     for (let idx = 0; idx < topElements.length; idx++) {
       const el = topElements[idx];
 
-      // 1. Metadata section (.meta-section with ul.dash-list)
+      // 1. Metadata section (.meta-section with table.meta-table)
       if (el.classList.contains('meta-section')) {
         const wholeClone = el.cloneNode(true);
         pageCtx.body.appendChild(wholeClone);
@@ -260,35 +260,40 @@
           continue;
         }
 
-        // Split .dash-list cleanly across sheets if needed
         pageCtx.body.removeChild(wholeClone);
-        const srcList = el.querySelector('ul.dash-list');
-        if (!srcList) {
+        const srcMetaTable = el.querySelector('table.meta-table');
+        if (!srcMetaTable) {
           pageCtx = createBlankSheet();
           pageCtx.body.appendChild(wholeClone);
           continue;
         }
 
-        let metaWrap = document.createElement('section');
-        metaWrap.className = el.className;
-        let ulWrap = document.createElement('ul');
-        ulWrap.className = srcList.className;
-        metaWrap.appendChild(ulWrap);
-        pageCtx.body.appendChild(metaWrap);
+        const buildEmptyMetaSection = () => {
+          const sec = document.createElement('section');
+          sec.className = el.className;
+          const tbl = document.createElement('table');
+          tbl.className = srcMetaTable.className;
+          const cg = srcMetaTable.querySelector('colgroup');
+          if (cg) tbl.appendChild(cg.cloneNode(true));
+          const tb = document.createElement('tbody');
+          tbl.appendChild(tb);
+          sec.appendChild(tbl);
+          return { sec, tb };
+        };
 
-        Array.from(srcList.children).forEach((li) => {
-          const liClone = li.cloneNode(true);
-          ulWrap.appendChild(liClone);
-          if (pageCtx.body.offsetHeight > pageCtx.maxBodyHeight && ulWrap.children.length > 1) {
-            ulWrap.removeChild(liClone);
+        let metaCtx = buildEmptyMetaSection();
+        pageCtx.body.appendChild(metaCtx.sec);
+
+        const metaRows = Array.from(srcMetaTable.querySelectorAll('tbody > tr'));
+        metaRows.forEach((tr) => {
+          const trClone = tr.cloneNode(true);
+          metaCtx.tb.appendChild(trClone);
+          if (pageCtx.body.offsetHeight > pageCtx.maxBodyHeight && metaCtx.tb.children.length > 1) {
+            metaCtx.tb.removeChild(trClone);
             pageCtx = createBlankSheet();
-            metaWrap = document.createElement('section');
-            metaWrap.className = el.className;
-            ulWrap = document.createElement('ul');
-            ulWrap.className = srcList.className;
-            metaWrap.appendChild(ulWrap);
-            pageCtx.body.appendChild(metaWrap);
-            ulWrap.appendChild(liClone);
+            metaCtx = buildEmptyMetaSection();
+            pageCtx.body.appendChild(metaCtx.sec);
+            metaCtx.tb.appendChild(trClone);
           }
         });
         continue;
@@ -652,11 +657,12 @@
         font-weight: normal;
       }
       .doc-sub-title { font-style: italic; text-align: center; }
-      ul.dash-list, ul.sub-plus-list { list-style-type: none; margin: 0; padding: 0; }
-      ul.dash-list > li { margin-bottom: 2pt; }
-      ul.sub-plus-list { margin-left: 18pt; margin-top: 2pt; margin-bottom: 3pt; }
-      ul.sub-plus-list > li { margin-bottom: 2pt; }
-      .meta-label { font-weight: bold; }
+      .meta-section { margin-left: 22.7pt; margin-bottom: 10pt; }
+      table.meta-table { width: 100%; border-collapse: collapse; border: none; table-layout: fixed; }
+      table.meta-table td { border: none; padding: 1.5pt 0; vertical-align: top; font-family: "Khmer OS Siemreap", "Hanuman", serif; font-size: 10.2pt; }
+      table.meta-table td.meta-label-cell { width: 147.4pt; font-weight: bold; white-space: nowrap; padding-right: 6pt; }
+      table.meta-table tr.meta-sub-row td.meta-label-cell { padding-left: 17pt; }
+      .meta-colon { font-weight: bold; margin-right: 3pt; }
       table.lesson-table {
         width: 100%;
         border-collapse: collapse;

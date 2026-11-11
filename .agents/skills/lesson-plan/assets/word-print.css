@@ -292,40 +292,52 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Single-Column Vertical Dash (-) Metadata, Objectives, and Teaching Materials
+   Indented Metadata Header with Vertically Aligned "៖" (សញ្ញាភ្នែកមាន់ស្មើជួរគ្នា)
    -------------------------------------------------------------------------- */
 .meta-section {
-  margin-bottom: 3.5mm;
+  margin: 0 0 3.5mm 8mm;
   font-size: 10.2pt;
-  line-height: 1.6;
+  line-height: 1.56;
 }
 
-.dash-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none !important;
+  table-layout: fixed;
 }
 
-.dash-list > li {
-  margin-bottom: 0.7mm;
-  padding-left: 3.5mm;
-  text-indent: -3.5mm;
+.meta-table col.meta-col-label {
+  width: 52mm;
 }
 
-.sub-plus-list {
-  margin: 0.6mm 0 1mm 0;
-  padding-left: 7.5mm;
-  list-style: none;
+.meta-table col.meta-col-value {
+  width: auto;
 }
 
-.sub-plus-list > li {
-  margin-bottom: 0.6mm;
-  padding-left: 3.8mm;
-  text-indent: -3.8mm;
+.meta-table td {
+  border: none !important;
+  padding: 0.45mm 0 !important;
+  vertical-align: top;
 }
 
-.meta-label {
+.meta-table td.meta-label-cell {
   font-weight: 700;
+  white-space: nowrap;
+  padding-right: 2mm !important;
+}
+
+.meta-table tr.meta-sub-row td.meta-label-cell {
+  padding-left: 6mm !important;
+}
+
+.meta-table td.meta-value-cell {
+  word-wrap: break-word;
+}
+
+.meta-colon {
+  font-weight: 700;
+  margin-right: 1.2mm;
 }
 
 /* --------------------------------------------------------------------------
