@@ -76,6 +76,11 @@
         font-weight: normal;
       }
       .doc-sub-title { font-style: italic; text-align: center; }
+      ul.dash-list, ul.sub-plus-list { list-style-type: none; margin: 0; padding: 0; }
+      ul.dash-list > li { margin-bottom: 2.5pt; }
+      ul.sub-plus-list { margin-left: 18pt; margin-top: 2pt; margin-bottom: 3pt; }
+      ul.sub-plus-list > li { margin-bottom: 2pt; }
+      .meta-label { font-weight: bold; }
       table.lesson-table {
         width: 100%;
         border-collapse: collapse;
