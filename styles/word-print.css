@@ -1,12 +1,12 @@
 /* ==========================================================================
-   ទម្រង់ស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេក (A4 Landscape Word Style)
-   ក្រសួងអប់រំ យុវជន និងកីឡា — គោលវិធីសិស្សមជ្ឈមណ្ឌល និងវិធីបង្រៀន 5E
+   ទម្រង់ស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេកបំបែកសន្លឹកដាច់ៗពីគ្នា
+   (True Multi-Page A4 Landscape Word Print-Layout Sheets + KaTeX LaTeX)
    ========================================================================== */
 
 :root {
   --word-blue: #185abd;
   --word-blue-dark: #103f87;
-  --desk-bg: #dde1e7;
+  --desk-bg: #cbd2dc;
   --paper-bg: #ffffff;
   --ink-black: #000000;
   --font-muol: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif;
@@ -27,8 +27,8 @@ body {
   background-color: var(--desk-bg);
   color: var(--ink-black);
   font-family: var(--font-body);
-  font-size: 11pt;
-  line-height: 1.62;
+  font-size: 10.5pt;
+  line-height: 1.58;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -47,7 +47,7 @@ body {
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
 }
 
 .word-toolbar-brand {
@@ -79,8 +79,20 @@ body {
 
 .word-doc-sub {
   font-size: 11px;
-  opacity: 0.88;
+  opacity: 0.9;
   display: block;
+}
+
+.page-count-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .word-toolbar-actions {
@@ -126,14 +138,15 @@ body {
   background: #ffecb3;
   color: #1f2937;
   border-color: #fde68a;
+  font-weight: 700;
 }
 
 /* --------------------------------------------------------------------------
-   Word Print-Layout Desk & A4 Landscape Paper (297mm × 210mm)
+   Word Print-Layout Desk & Discrete Separated A4 Landscape Sheets (297mm × 210mm)
    -------------------------------------------------------------------------- */
 .desk-viewport {
   width: 100%;
-  padding: 22px 12px 48px;
+  padding: 24px 12px 52px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,24 +155,81 @@ body {
 
 .page-scale-shell {
   transform-origin: top center;
-  transition: transform 150ms ease;
+  transition: transform 140ms ease;
+}
+
+/* Stack of distinct physical A4 sheets separated by clear desk gaps */
+.pages-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
 }
 
 .a4-page {
-  /* A4 Landscape: 297mm wide × 210mm min-height */
+  /* Exact ISO A4 Landscape Sheet: 297mm wide × 210mm tall */
   width: 297mm;
-  min-height: 210mm;
+  height: 210mm;
   background: var(--paper-bg);
   color: var(--ink-black);
-  padding: 15mm 15mm 16mm 20mm;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.25);
+  padding: 13mm 14mm 14mm 18mm;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2), 0 1px 3px rgba(15, 23, 42, 0.14);
   position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Continuous canvas mode used only while actively editing text */
+.a4-page.a4-page-edit-mode {
+  height: auto;
+  min-height: 210mm;
+  overflow: visible;
+}
+
+.a4-page-body {
+  width: 100%;
+}
+
+.edit-mode-banner {
+  background: #eff6ff;
+  border: 1px dashed var(--word-blue);
+  color: var(--word-blue-dark);
+  padding: 6px 12px;
+  margin-bottom: 4mm;
+  border-radius: 4px;
+  font-size: 10pt;
+  text-align: center;
+}
+
+/* Official Word-style bottom margin page counter */
+.page-footer {
+  position: absolute;
+  bottom: 4.5mm;
+  left: 18mm;
+  right: 14mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9pt;
+  color: #374151;
+  pointer-events: none;
+}
+
+.page-footer-label {
+  opacity: 0.75;
+  font-size: 8.5pt;
+}
+
+.page-footer-num {
+  font-weight: 700;
+  color: #111827;
 }
 
 .a4-page.show-edit-guides [contenteditable='true'] {
   background-color: rgba(24, 90, 189, 0.04);
   border-radius: 2px;
-  outline: 1px dashed rgba(24, 90, 189, 0.25);
+  outline: 1px dashed rgba(24, 90, 189, 0.28);
 }
 
 [contenteditable='true']:focus {
@@ -172,30 +242,30 @@ body {
    -------------------------------------------------------------------------- */
 .kingdom-motto {
   text-align: center;
-  margin-bottom: 2mm;
+  margin-bottom: 1.5mm;
 }
 
 .muol-heading {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 11.5pt;
-  line-height: 1.75;
+  font-size: 11pt;
+  line-height: 1.7;
   margin: 0;
   letter-spacing: 0.01em;
 }
 
 .tacteing-ornament {
   display: block;
-  margin: 1mm auto 2mm;
-  width: 96px;
-  height: 14px;
+  margin: 0.8mm auto 1.5mm;
+  width: 92px;
+  height: 13px;
 }
 
 .school-admin-block {
   margin-top: -5mm;
-  margin-bottom: 3mm;
-  font-size: 10.5pt;
-  line-height: 1.62;
+  margin-bottom: 2mm;
+  font-size: 10pt;
+  line-height: 1.58;
 }
 
 .school-admin-block p {
@@ -204,20 +274,20 @@ body {
 
 .doc-title-block {
   text-align: center;
-  margin: 2mm 0 4.5mm;
+  margin: 1.5mm 0 3.5mm;
 }
 
 .doc-main-title {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 12.5pt;
+  font-size: 12pt;
   margin: 0;
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 .doc-sub-title {
   margin: 0;
-  font-size: 10.5pt;
+  font-size: 10pt;
   font-style: italic;
 }
 
@@ -225,9 +295,9 @@ body {
    Single-Column Vertical Dash (-) Metadata, Objectives, and Teaching Materials
    -------------------------------------------------------------------------- */
 .meta-section {
-  margin-bottom: 4.5mm;
-  font-size: 10.5pt;
-  line-height: 1.68;
+  margin-bottom: 3.5mm;
+  font-size: 10.2pt;
+  line-height: 1.6;
 }
 
 .dash-list {
@@ -237,19 +307,19 @@ body {
 }
 
 .dash-list > li {
-  margin-bottom: 0.9mm;
+  margin-bottom: 0.7mm;
   padding-left: 3.5mm;
   text-indent: -3.5mm;
 }
 
 .sub-plus-list {
-  margin: 0.8mm 0 1.2mm 0;
-  padding-left: 8mm;
+  margin: 0.6mm 0 1mm 0;
+  padding-left: 7.5mm;
   list-style: none;
 }
 
 .sub-plus-list > li {
-  margin-bottom: 0.8mm;
+  margin-bottom: 0.6mm;
   padding-left: 3.8mm;
   text-indent: -3.8mm;
 }
@@ -266,19 +336,19 @@ body {
   border-collapse: collapse;
   border: 1pt solid #000000;
   table-layout: fixed;
-  font-size: 10.5pt;
-  line-height: 1.6;
+  font-size: 10.2pt;
+  line-height: 1.55;
 }
 
 .lesson-table th,
 .lesson-table td {
   border: 1pt solid #000000;
-  padding: 2.2mm 2.8mm;
+  padding: 2mm 2.6mm;
   vertical-align: top;
   word-wrap: break-word;
 }
 
-/* Landscape Proportions: wider middle column for clear mathematics & division work */
+/* Landscape Proportions: wider middle column for clear LaTeX equations */
 .col-teacher {
   width: 28%;
 }
@@ -294,27 +364,27 @@ body {
 .lesson-table thead th {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.5pt;
+  font-size: 10.2pt;
   text-align: center;
   vertical-align: middle;
   background-color: #f3f4f6;
-  padding: 2.8mm 2mm;
+  padding: 2.3mm 2mm;
 }
 
-/* Major Step Banner Row — Strictly CENTERED per Cambodian Math Lesson Plan requirement */
+/* Major Step Banner Row — Strictly CENTERED */
 .step-banner-cell {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.5pt;
+  font-size: 10.2pt;
   background-color: #f9fafb;
   text-align: center !important;
-  padding: 2.4mm 3mm !important;
+  padding: 2mm 3mm !important;
 }
 
 .step-duration {
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 10.5pt;
+  font-size: 10.2pt;
   margin-left: 4px;
 }
 
@@ -322,7 +392,7 @@ body {
 .phase-5e-badge {
   display: block;
   font-weight: 700;
-  margin-bottom: 1.2mm;
+  margin-bottom: 1mm;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -333,37 +403,37 @@ body {
 }
 
 .cell-list li {
-  margin-bottom: 1mm;
+  margin-bottom: 0.8mm;
 }
 
 .dots-line {
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   color: #111111;
 }
 
 .math-box {
   border: 0.75pt solid #222222;
   background-color: #fcfcfc;
-  padding: 2mm 3mm;
-  margin: 1.5mm 0;
+  padding: 1.8mm 2.8mm;
+  margin: 1.2mm 0;
 }
 
 .math-formula {
   font-family: 'KaTeX_Main', var(--font-math);
   text-align: center;
-  font-size: 11.2pt;
-  margin: 1.5mm 0;
+  font-size: 11pt;
+  margin: 1.2mm 0;
 }
 
 /* Publication-Grade LaTeX (KaTeX Computer Modern) Typography */
 .katex {
-  font-size: 1.07em !important;
+  font-size: 1.06em !important;
   color: #000000;
-  line-height: 1.25;
+  line-height: 1.22;
 }
 
 .katex-display {
-  margin: 2mm 0 !important;
+  margin: 1.6mm 0 !important;
   overflow-x: auto;
   overflow-y: hidden;
   page-break-inside: avoid;
@@ -371,7 +441,7 @@ body {
 }
 
 .katex-display > .katex {
-  font-size: 1.12em !important;
+  font-size: 1.1em !important;
 }
 
 .katex .mtext {
@@ -379,24 +449,16 @@ body {
 }
 
 /* Cambodian / French Potence Vertical Division Table (ប្រមាណវិធីចែកបញ្ឈរ) */
-.div-examples-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8mm;
-  align-items: flex-start;
-  margin: 2mm 0;
-}
-
 .layout-pair-table {
   width: 100%;
   border-collapse: collapse;
   border: none !important;
-  margin: 1.5mm 0;
+  margin: 1mm 0;
 }
 
 .layout-pair-table > tbody > tr > td {
   border: none !important;
-  padding: 1mm 2mm !important;
+  padding: 0.8mm 2mm !important;
   vertical-align: top;
   width: 50%;
 }
@@ -406,13 +468,13 @@ body {
   border: none !important;
   width: auto !important;
   font-family: var(--font-math);
-  font-size: 10.5pt;
-  line-height: 1.35;
+  font-size: 10.2pt;
+  line-height: 1.3;
 }
 
 .potence-table td {
   border: none !important;
-  padding: 0.6mm 2mm !important;
+  padding: 0.5mm 1.8mm !important;
   white-space: nowrap;
 }
 
@@ -435,32 +497,32 @@ body {
 .potence-sub {
   border-bottom: 0.75pt solid #000000;
   display: inline-block;
-  min-width: 26px;
+  min-width: 24px;
 }
 
 /* --------------------------------------------------------------------------
    Post-Table Reflection & Formal Signature Block
    -------------------------------------------------------------------------- */
 .reflection-box {
-  margin-top: 4mm;
+  margin-top: 3.5mm;
   border: 1pt solid #000000;
-  padding: 2.5mm 3.5mm;
-  font-size: 10.5pt;
+  padding: 2.2mm 3.2mm;
+  font-size: 10.2pt;
   page-break-inside: avoid;
 }
 
 .reflection-title {
   font-weight: 700;
-  margin: 0 0 1mm 0;
+  margin: 0 0 0.8mm 0;
 }
 
 .signature-table {
   width: 100%;
   border-collapse: collapse;
   border: none;
-  margin-top: 6mm;
-  font-size: 10.5pt;
-  line-height: 1.65;
+  margin-top: 5mm;
+  font-size: 10.2pt;
+  line-height: 1.6;
   page-break-inside: avoid;
 }
 
@@ -475,20 +537,21 @@ body {
 .sig-role-muol {
   font-family: var(--font-muol);
   font-weight: 400;
-  font-size: 10.5pt;
-  margin-top: 1.5mm;
+  font-size: 10.2pt;
+  margin-top: 1.2mm;
 }
 
 .sig-space {
-  height: 18mm;
+  height: 16mm;
 }
 
 /* --------------------------------------------------------------------------
-   Exact Microsoft Word Landscape Print Output (@media print)
+   1-to-1 Exact WYSIWYG Print Output (@media print)
+   Each on-screen .a4-page sheet prints onto exactly ONE A4 Landscape page!
    -------------------------------------------------------------------------- */
 @page {
   size: A4 landscape;
-  margin: 14mm 14mm 14mm 18mm;
+  margin: 0;
 }
 
 @media print {
@@ -497,15 +560,18 @@ body {
     background: #ffffff !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 297mm !important;
   }
 
   .no-print,
-  .word-toolbar {
+  .word-toolbar,
+  .edit-mode-banner {
     display: none !important;
   }
 
   .desk-viewport {
     padding: 0 !important;
+    margin: 0 !important;
     overflow: visible !important;
     display: block !important;
   }
@@ -513,29 +579,36 @@ body {
   .page-scale-shell {
     transform: none !important;
     height: auto !important;
-    width: 100% !important;
+    width: 297mm !important;
+  }
+
+  .pages-stack {
+    display: block !important;
+    gap: 0 !important;
   }
 
   .a4-page {
-    width: 100% !important;
-    min-height: 0 !important;
-    padding: 0 !important;
+    width: 297mm !important;
+    height: 209.6mm !important;
+    padding: 13mm 14mm 14mm 18mm !important;
     margin: 0 !important;
+    border: none !important;
     box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .a4-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
   .a4-page.show-edit-guides [contenteditable='true'] {
     background: transparent !important;
     outline: none !important;
-  }
-
-  .lesson-table thead {
-    display: table-header-group;
-  }
-
-  .lesson-table tr {
-    break-inside: avoid;
-    page-break-inside: avoid;
   }
 
   .lesson-table thead th,
