@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ទម្រង់ទទេស្តង់ដារ — កិច្ចតែងការបង្រៀនគណិតវិទ្យា (ក្រដាសផ្ដេក 5E)</title>
+  <title>ទម្រង់ទទេស្តង់ដារ — កិច្ចតែងការបង្រៀនគណិតវិទ្យា (ក្រដាសផ្ដេក 5E + LaTeX)</title>
   <meta
     name="description"
-    content="ទម្រង់ទទេស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា ក្រដាសផ្ដេក (A4 Landscape) តាមគោលវិធីសិស្សមជ្ឈមណ្ឌល និងវិធីបង្រៀន 5E ដូចក្នុងកម្មវិធី Microsoft Word"
+    content="ទម្រង់ទទេស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា ក្រដាសផ្ដេក (A4 Landscape) សរសេររូបមន្តស្តង់ដារ LaTeX តាមគោលវិធីសិស្សមជ្ឈមណ្ឌល និងវិធីបង្រៀន 5E ដូចក្នុងកម្មវិធី Microsoft Word"
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Hanuman:wght@400;700&family=Moul&family=Noto+Serif+Khmer:wght@400;700&display=swap"
     rel="stylesheet"
+  />
+  <!-- ប្រព័ន្ធបង្ហាញរូបមន្តគណិតវិទ្យាស្តង់ដារខ្ពស់ LaTeX (KaTeX) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+    crossorigin="anonymous"
   />
   <link rel="stylesheet" href="./styles/word-print.css" />
 </head>
@@ -22,8 +28,8 @@
     <div class="word-toolbar-brand">
       <span class="word-badge" aria-hidden="true">W</span>
       <div>
-        <span class="word-doc-name">ទម្រង់ទទេស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា (ក្រដាសផ្ដេក — 5E)</span>
-        <span class="word-doc-sub">ខ្នាតក្រដាស A4 ផ្ដេក (Landscape) ស្តង់ដារ Microsoft Word — ៣ ជួរឈរ × ៥ ជំហានចំកណ្ដាល</span>
+        <span class="word-doc-name">ទម្រង់ទទេស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា (ក្រដាសផ្ដេក — 5E &amp; LaTeX)</span>
+        <span class="word-doc-sub">ខ្នាតក្រដាស A4 ផ្ដេក ដូច Microsoft Word + រូបមន្តគណិតវិទ្យា LaTeX — ៣ ជួរឈរ × ៥ ជំហានចំកណ្ដាល</span>
       </div>
     </div>
 
@@ -264,10 +270,10 @@
                 </ul>
               </td>
               <td>
-                <p style="margin: 0 0 1mm 0;"><strong>និយមន័យ / រូបមន្ត / ទ្រឹស្តីបទ ៖</strong></p>
+                <p style="margin: 0 0 1mm 0;"><strong>និយមន័យ / រូបមន្ត / ទ្រឹស្តីបទ (LaTeX) ៖</strong></p>
                 <div class="math-box">
                   ........................................................................................<br />
-                  ........................................................................................<br />
+                  $$f(x) = \dots$$
                   ........................................................................................
                 </div>
                 <p style="margin: 2mm 0 1mm 0;"><strong>ឧទាហរណ៍គំរូ ៖</strong></p>
@@ -421,6 +427,8 @@
     </div>
   </main>
 
-  <script src="./scripts/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script defer src="./scripts/app.js"></script>
 </body>
 </html>

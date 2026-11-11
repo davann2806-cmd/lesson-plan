@@ -1,0 +1,547 @@
+/* ==========================================================================
+   ទម្រង់ស្តង់ដារកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេក (A4 Landscape Word Style)
+   ក្រសួងអប់រំ យុវជន និងកីឡា — គោលវិធីសិស្សមជ្ឈមណ្ឌល និងវិធីបង្រៀន 5E
+   ========================================================================== */
+
+:root {
+  --word-blue: #185abd;
+  --word-blue-dark: #103f87;
+  --desk-bg: #dde1e7;
+  --paper-bg: #ffffff;
+  --ink-black: #000000;
+  --font-muol: 'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif;
+  --font-body: 'Khmer OS Siemreap', 'Khmer OS Battambang', 'Hanuman', 'Battambang', 'Noto Serif Khmer', serif;
+  --font-math: 'Cambria Math', 'Times New Roman', var(--font-body);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--desk-bg);
+  color: var(--ink-black);
+  font-family: var(--font-body);
+  font-size: 11pt;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   Screen-Only Microsoft Word Style Top Ribbon (Hidden when printing!)
+   -------------------------------------------------------------------------- */
+.word-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--word-blue);
+  color: #ffffff;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.word-toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.word-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: var(--word-blue);
+  font-family: 'Times New Roman', serif;
+  font-weight: 700;
+  font-size: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.word-doc-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.word-doc-sub {
+  font-size: 11px;
+  opacity: 0.88;
+  display: block;
+}
+
+.word-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  appearance: none;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 5px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 120ms ease;
+}
+
+.toolbar-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.toolbar-btn-primary {
+  background: #ffffff;
+  color: var(--word-blue-dark);
+  border-color: #ffffff;
+  font-weight: 700;
+}
+
+.toolbar-btn-primary:hover {
+  background: #f0f4ff;
+}
+
+.toolbar-btn.is-active {
+  background: #ffecb3;
+  color: #1f2937;
+  border-color: #fde68a;
+}
+
+/* --------------------------------------------------------------------------
+   Word Print-Layout Desk & A4 Landscape Paper (297mm × 210mm)
+   -------------------------------------------------------------------------- */
+.desk-viewport {
+  width: 100%;
+  padding: 22px 12px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.page-scale-shell {
+  transform-origin: top center;
+  transition: transform 150ms ease;
+}
+
+.a4-page {
+  /* A4 Landscape: 297mm wide × 210mm min-height */
+  width: 297mm;
+  min-height: 210mm;
+  background: var(--paper-bg);
+  color: var(--ink-black);
+  padding: 15mm 15mm 16mm 20mm;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.a4-page.show-edit-guides [contenteditable='true'] {
+  background-color: rgba(24, 90, 189, 0.04);
+  border-radius: 2px;
+  outline: 1px dashed rgba(24, 90, 189, 0.25);
+}
+
+[contenteditable='true']:focus {
+  outline: 1.5px solid var(--word-blue);
+  background-color: rgba(24, 90, 189, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Official Kingdom of Cambodia & MoEYS Document Header
+   -------------------------------------------------------------------------- */
+.kingdom-motto {
+  text-align: center;
+  margin-bottom: 2mm;
+}
+
+.muol-heading {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 11.5pt;
+  line-height: 1.75;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.tacteing-ornament {
+  display: block;
+  margin: 1mm auto 2mm;
+  width: 96px;
+  height: 14px;
+}
+
+.school-admin-block {
+  margin-top: -5mm;
+  margin-bottom: 3mm;
+  font-size: 10.5pt;
+  line-height: 1.62;
+}
+
+.school-admin-block p {
+  margin: 0;
+}
+
+.doc-title-block {
+  text-align: center;
+  margin: 2mm 0 4.5mm;
+}
+
+.doc-main-title {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 12.5pt;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.doc-sub-title {
+  margin: 0;
+  font-size: 10.5pt;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   Single-Column Vertical Dash (-) Metadata, Objectives, and Teaching Materials
+   -------------------------------------------------------------------------- */
+.meta-section {
+  margin-bottom: 4.5mm;
+  font-size: 10.5pt;
+  line-height: 1.68;
+}
+
+.dash-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dash-list > li {
+  margin-bottom: 0.9mm;
+  padding-left: 3.5mm;
+  text-indent: -3.5mm;
+}
+
+.sub-plus-list {
+  margin: 0.8mm 0 1.2mm 0;
+  padding-left: 8mm;
+  list-style: none;
+}
+
+.sub-plus-list > li {
+  margin-bottom: 0.8mm;
+  padding-left: 3.8mm;
+  text-indent: -3.8mm;
+}
+
+.meta-label {
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Standard 3-Column Microsoft Word Table (តារាង ៣ ជួរឈរ × ៥ ជំហាន)
+   -------------------------------------------------------------------------- */
+.lesson-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1pt solid #000000;
+  table-layout: fixed;
+  font-size: 10.5pt;
+  line-height: 1.6;
+}
+
+.lesson-table th,
+.lesson-table td {
+  border: 1pt solid #000000;
+  padding: 2.2mm 2.8mm;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+/* Landscape Proportions: wider middle column for clear mathematics & division work */
+.col-teacher {
+  width: 28%;
+}
+
+.col-content {
+  width: 44%;
+}
+
+.col-student {
+  width: 28%;
+}
+
+.lesson-table thead th {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 10.5pt;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #f3f4f6;
+  padding: 2.8mm 2mm;
+}
+
+/* Major Step Banner Row — Strictly CENTERED per Cambodian Math Lesson Plan requirement */
+.step-banner-cell {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 10.5pt;
+  background-color: #f9fafb;
+  text-align: center !important;
+  padding: 2.4mm 3mm !important;
+}
+
+.step-duration {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 10.5pt;
+  margin-left: 4px;
+}
+
+/* 5E Phase Sub-Header inside Step 3 & Step 4 */
+.phase-5e-badge {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 1.2mm;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cell-list {
+  margin: 0;
+  padding-left: 4.5mm;
+}
+
+.cell-list li {
+  margin-bottom: 1mm;
+}
+
+.dots-line {
+  letter-spacing: 0.5px;
+  color: #111111;
+}
+
+.math-box {
+  border: 0.75pt solid #222222;
+  background-color: #fcfcfc;
+  padding: 2mm 3mm;
+  margin: 1.5mm 0;
+}
+
+.math-formula {
+  font-family: 'KaTeX_Main', var(--font-math);
+  text-align: center;
+  font-size: 11.2pt;
+  margin: 1.5mm 0;
+}
+
+/* Publication-Grade LaTeX (KaTeX Computer Modern) Typography */
+.katex {
+  font-size: 1.07em !important;
+  color: #000000;
+  line-height: 1.25;
+}
+
+.katex-display {
+  margin: 2mm 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.katex-display > .katex {
+  font-size: 1.12em !important;
+}
+
+.katex .mtext {
+  font-family: 'KaTeX_Main', var(--font-body);
+}
+
+/* Cambodian / French Potence Vertical Division Table (ប្រមាណវិធីចែកបញ្ឈរ) */
+.div-examples-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8mm;
+  align-items: flex-start;
+  margin: 2mm 0;
+}
+
+.layout-pair-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none !important;
+  margin: 1.5mm 0;
+}
+
+.layout-pair-table > tbody > tr > td {
+  border: none !important;
+  padding: 1mm 2mm !important;
+  vertical-align: top;
+  width: 50%;
+}
+
+.potence-table {
+  border-collapse: collapse;
+  border: none !important;
+  width: auto !important;
+  font-family: var(--font-math);
+  font-size: 10.5pt;
+  line-height: 1.35;
+}
+
+.potence-table td {
+  border: none !important;
+  padding: 0.6mm 2mm !important;
+  white-space: nowrap;
+}
+
+.potence-table td.pot-left {
+  text-align: right;
+  border-right: 1pt solid #000000 !important;
+}
+
+.potence-table td.pot-divisor {
+  text-align: left;
+  border-bottom: 1pt solid #000000 !important;
+  font-weight: 700;
+}
+
+.potence-table td.pot-quotient {
+  text-align: left;
+  font-weight: 700;
+}
+
+.potence-sub {
+  border-bottom: 0.75pt solid #000000;
+  display: inline-block;
+  min-width: 26px;
+}
+
+/* --------------------------------------------------------------------------
+   Post-Table Reflection & Formal Signature Block
+   -------------------------------------------------------------------------- */
+.reflection-box {
+  margin-top: 4mm;
+  border: 1pt solid #000000;
+  padding: 2.5mm 3.5mm;
+  font-size: 10.5pt;
+  page-break-inside: avoid;
+}
+
+.reflection-title {
+  font-weight: 700;
+  margin: 0 0 1mm 0;
+}
+
+.signature-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+  margin-top: 6mm;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  page-break-inside: avoid;
+}
+
+.signature-table td {
+  width: 50%;
+  border: none;
+  text-align: center;
+  vertical-align: top;
+  padding: 0 3mm;
+}
+
+.sig-role-muol {
+  font-family: var(--font-muol);
+  font-weight: 400;
+  font-size: 10.5pt;
+  margin-top: 1.5mm;
+}
+
+.sig-space {
+  height: 18mm;
+}
+
+/* --------------------------------------------------------------------------
+   Exact Microsoft Word Landscape Print Output (@media print)
+   -------------------------------------------------------------------------- */
+@page {
+  size: A4 landscape;
+  margin: 14mm 14mm 14mm 18mm;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .no-print,
+  .word-toolbar {
+    display: none !important;
+  }
+
+  .desk-viewport {
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .page-scale-shell {
+    transform: none !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  .a4-page {
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .a4-page.show-edit-guides [contenteditable='true'] {
+    background: transparent !important;
+    outline: none !important;
+  }
+
+  .lesson-table thead {
+    display: table-header-group;
+  }
+
+  .lesson-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .lesson-table thead th,
+  .step-banner-cell,
+  .math-box {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

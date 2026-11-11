@@ -349,11 +349,33 @@ body {
 }
 
 .math-formula {
-  font-family: var(--font-math);
-  font-weight: 700;
+  font-family: 'KaTeX_Main', var(--font-math);
   text-align: center;
-  font-size: 11.5pt;
-  margin: 1.2mm 0;
+  font-size: 11.2pt;
+  margin: 1.5mm 0;
+}
+
+/* Publication-Grade LaTeX (KaTeX Computer Modern) Typography */
+.katex {
+  font-size: 1.07em !important;
+  color: #000000;
+  line-height: 1.25;
+}
+
+.katex-display {
+  margin: 2mm 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.katex-display > .katex {
+  font-size: 1.12em !important;
+}
+
+.katex .mtext {
+  font-family: 'KaTeX_Main', var(--font-body);
 }
 
 /* Cambodian / French Potence Vertical Division Table (ប្រមាណវិធីចែកបញ្ឈរ) */

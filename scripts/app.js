@@ -1,5 +1,5 @@
 /**
- * កម្មវិធីគ្រប់គ្រងកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេក A4 Landscape (Print & Word .doc Export)
+ * កម្មវិធីគ្រប់គ្រងកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេក A4 Landscape + LaTeX (KaTeX) + Word (.doc) Export
  */
 
 (function () {
@@ -14,6 +14,22 @@
 
   let fitToScreen = true;
   let editMode = false;
+
+  const KATEX_DELIMITERS = [
+    { left: '$$', right: '$$', display: true },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '$', right: '$', display: false },
+    { left: '\\(', right: '\\)', display: false }
+  ];
+
+  function renderLatexMath(targetEl) {
+    if (!targetEl || typeof window.renderMathInElement !== 'function') return;
+    window.renderMathInElement(targetEl, {
+      delimiters: KATEX_DELIMITERS,
+      throwOnError: false,
+      strict: false
+    });
+  }
 
   function updatePageScale() {
     if (!pageEl || !shellEl) return;
@@ -40,13 +56,132 @@
     editMode = enabled;
     pageEl.classList.toggle('show-edit-guides', enabled);
     btnEdit.classList.toggle('is-active', enabled);
-    btnEdit.textContent = enabled ? '✓ កំពុងបើកកែសម្រួល' : '✏️ កែសម្រួលលើទម្រង់';
+    btnEdit.textContent = enabled ? '✓ រក្សាទុក & បង្ហាញ LaTeX' : '✏️ កែសម្រួលលើទម្រង់';
 
     const editTargets = pageEl.querySelectorAll('.editable-region');
     editTargets.forEach((el) => {
       el.setAttribute('contenteditable', enabled ? 'true' : 'false');
     });
+
+    if (!enabled) {
+      renderLatexMath(pageEl);
+    }
     updatePageScale();
+  }
+
+  /**
+   * បម្លែងកន្សោម LaTeX ពី KaTeX annotation ទៅជាទម្រង់ Cambria Math សម្រាប់ឯកសារ Microsoft Word (.doc)
+   * ដើម្បីកុំឱ្យស្ទួនអក្សរ (.katex-mathml + .katex-html) ពេលបើកក្នុងកម្មវិធី Word
+   */
+  function texToWordHtml(rawTex, isDisplay) {
+    let s = rawTex.trim();
+
+    // Escape HTML special chars first
+    s = s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Text blocks inside LaTeX: \text{...}
+    s = s.replace(/\\text\{([^{}]*)\}/g, '<span class="word-mtext">$1</span>');
+    s = s.replace(/\\textbf\{([^{}]*)\}/g, '<b>$1</b>');
+    s = s.replace(/\\mathbf\{([^{}]*)\}/g, '<b>$1</b>');
+
+    // Fractions: \dfrac{a}{b} or \frac{a}{b}
+    for (let i = 0; i < 2; i++) {
+      s = s.replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)');
+    }
+
+    // Roots: \sqrt{x}
+    s = s.replace(/\\sqrt\{([^{}]*)\}/g, '√($1)');
+
+    // Superscripts & subscripts: ^{...}, _{...}, ^2, _1
+    s = s.replace(/\^\{([^{}]*)\}/g, '<sup>$1</sup>');
+    s = s.replace(/_\{([^{}]*)\}/g, '<sub>$1</sub>');
+    s = s.replace(/\^([0-9a-zA-Z])/g, '<sup>$1</sup>');
+    s = s.replace(/_([0-9a-zA-Z])/g, '<sub>$1</sub>');
+
+    // Spacing & common LaTeX math symbols
+    const symbolMap = [
+      [/\\qquad/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'],
+      [/\\quad/g, '&nbsp;&nbsp;&nbsp;&nbsp;'],
+      [/\\,/g, '&thinsp;'],
+      [/\\;/g, '&nbsp;'],
+      [/\\:/g, '&nbsp;'],
+      [/\\!/g, ''],
+      [/\\times/g, ' × '],
+      [/\\div/g, ' ÷ '],
+      [/\\cdot/g, ' · '],
+      [/\\pm/g, ' ± '],
+      [/\\mp/g, ' ∓ '],
+      [/\\le|\\leq/g, ' ≤ '],
+      [/\\ge|\\geq/g, ' ≥ '],
+      [/\\neq|\\ne/g, ' ≠ '],
+      [/\\approx/g, ' ≈ '],
+      [/\\equiv/g, ' ≡ '],
+      [/\\Rightarrow/g, ' ⇒ '],
+      [/\\Leftrightarrow/g, ' ⇔ '],
+      [/\\rightarrow|\\to/g, ' → '],
+      [/\\in/g, ' ∈ '],
+      [/\\notin/g, ' ∉ '],
+      [/\\subset/g, ' ⊂ '],
+      [/\\subseteq/g, ' ⊆ '],
+      [/\\cup/g, ' ∪ '],
+      [/\\cap/g, ' ∩ '],
+      [/\\emptyset/g, '∅'],
+      [/\\infty/g, '∞'],
+      [/\\pi/g, 'π'],
+      [/\\alpha/g, 'α'],
+      [/\\beta/g, 'β'],
+      [/\\gamma/g, 'γ'],
+      [/\\theta/g, 'θ'],
+      [/\\Delta/g, 'Δ'],
+      [/\\triangle/g, '△'],
+      [/\\angle/g, '∠'],
+      [/\\circ/g, '°'],
+      [/\\mathbb\{N\}/g, 'ℕ'],
+      [/\\mathbb\{Z\}/g, 'ℤ'],
+      [/\\mathbb\{Q\}/g, 'ℚ'],
+      [/\\mathbb\{R\}/g, 'ℝ'],
+      [/\\left/g, ''],
+      [/\\right/g, ''],
+      [/\\\{/g, '{'],
+      [/\\\}/g, '}']
+    ];
+
+    symbolMap.forEach(([regex, replacement]) => {
+      s = s.replace(regex, replacement);
+    });
+
+    // Italicize single Latin math variables outside HTML tags
+    s = s.replace(/(^|[^a-zA-Z0-9&;/])([a-zA-Z])(?=[^a-zA-Z0-9>]|$)/g, '$1<i>$2</i>');
+
+    if (isDisplay) {
+      return `<div class="word-math-display">${s}</div>`;
+    }
+    return `<span class="word-math-inline">${s}</span>`;
+  }
+
+  function convertKatexForWord(rootClone) {
+    // Convert display math blocks first
+    rootClone.querySelectorAll('.katex-display').forEach((dispEl) => {
+      const ann = dispEl.querySelector('annotation[encoding="application/x-tex"]');
+      if (ann) {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = texToWordHtml(ann.textContent || '', true);
+        dispEl.replaceWith(wrapper.firstElementChild);
+      }
+    });
+
+    // Convert remaining inline .katex spans
+    rootClone.querySelectorAll('.katex').forEach((katexEl) => {
+      const ann = katexEl.querySelector('annotation[encoding="application/x-tex"]');
+      if (ann) {
+        const wrapper = document.createElement('span');
+        wrapper.innerHTML = texToWordHtml(ann.textContent || '', false);
+        katexEl.replaceWith(wrapper.firstElementChild);
+      }
+    });
   }
 
   function exportToWordDoc() {
@@ -54,6 +189,8 @@
     clone.querySelectorAll('[contenteditable]').forEach((el) => {
       el.removeAttribute('contenteditable');
     });
+
+    convertKatexForWord(clone);
 
     // A4 Landscape MSO Page Setup: 841.9pt × 595.3pt
     const wordStyles = `
@@ -114,7 +251,20 @@
       }
       .phase-5e-badge { font-weight: bold; text-decoration: underline; }
       .math-box { border: 0.75pt solid #222222; padding: 5pt 7pt; margin: 4pt 0; background: #FCFCFC; }
-      .math-formula { font-family: "Cambria Math", "Times New Roman", serif; font-weight: bold; text-align: center; font-size: 11.5pt; }
+      .word-math-inline {
+        font-family: "Cambria Math", "Times New Roman", serif;
+        font-size: 11pt;
+      }
+      .word-math-display {
+        font-family: "Cambria Math", "Times New Roman", serif;
+        font-size: 11.5pt;
+        text-align: center;
+        margin: 5pt 0;
+        font-weight: normal;
+      }
+      .word-mtext {
+        font-family: "Khmer OS Siemreap", "Hanuman", serif;
+      }
       table.layout-pair-table { width: 100%; border-collapse: collapse; border: none; margin: 3pt 0; }
       table.layout-pair-table > tbody > tr > td { border: none; padding: 2pt 4pt; vertical-align: top; width: 50%; }
       table.potence-table { border-collapse: collapse; border: none; margin: 4pt 0; }
@@ -184,6 +334,7 @@
   window.addEventListener('afterprint', updatePageScale);
 
   window.addEventListener('DOMContentLoaded', () => {
+    renderLatexMath(pageEl);
     updatePageScale();
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updatePageScale);
