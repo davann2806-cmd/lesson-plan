@@ -1,5 +1,5 @@
 /**
- * កម្មវិធីគ្រប់គ្រងទម្រង់កិច្ចតែងការបង្រៀនគណិតវិទ្យា (Microsoft Word A4 Print & Export)
+ * កម្មវិធីគ្រប់គ្រងកិច្ចតែងការបង្រៀនគណិតវិទ្យា — ក្រដាសផ្ដេក A4 Landscape (Print & Word .doc Export)
  */
 
 (function () {
@@ -18,7 +18,6 @@
   function updatePageScale() {
     if (!pageEl || !shellEl) return;
 
-    // Reset first to measure natural A4 dimensions
     shellEl.style.transform = 'none';
     shellEl.style.height = 'auto';
 
@@ -56,10 +55,12 @@
       el.removeAttribute('contenteditable');
     });
 
+    // A4 Landscape MSO Page Setup: 841.9pt × 595.3pt
     const wordStyles = `
       @page WordSection1 {
-        size: 595.3pt 841.9pt;
-        margin: 42.55pt 42.55pt 42.55pt 56.7pt;
+        size: 841.9pt 595.3pt;
+        mso-page-orientation: landscape;
+        margin: 39.7pt 39.7pt 39.7pt 51.0pt;
         mso-header-margin: 35.4pt;
         mso-footer-margin: 35.4pt;
       }
@@ -71,7 +72,7 @@
         line-height: 1.55;
       }
       .kingdom-motto, .doc-title-block { text-align: center; }
-      .muol-heading, .doc-main-title, .section-heading-kh, .sig-role-muol {
+      .muol-heading, .doc-main-title, .sig-role-muol {
         font-family: "Khmer OS Muol Light", "Moul", serif;
         font-weight: normal;
       }
@@ -104,13 +105,30 @@
       .step-banner-cell {
         font-family: "Khmer OS Muol Light", "Moul", serif;
         font-weight: normal;
+        text-align: center;
         background: #F9F9F9;
       }
+      .step-duration {
+        font-family: "Khmer OS Siemreap", "Hanuman", serif;
+        font-weight: bold;
+      }
       .phase-5e-badge { font-weight: bold; text-decoration: underline; }
+      .math-box { border: 0.75pt solid #222222; padding: 5pt 7pt; margin: 4pt 0; background: #FCFCFC; }
+      .math-formula { font-family: "Cambria Math", "Times New Roman", serif; font-weight: bold; text-align: center; font-size: 11.5pt; }
+      table.layout-pair-table { width: 100%; border-collapse: collapse; border: none; margin: 3pt 0; }
+      table.layout-pair-table > tbody > tr > td { border: none; padding: 2pt 4pt; vertical-align: top; width: 50%; }
+      table.potence-table { border-collapse: collapse; border: none; margin: 4pt 0; }
+      table.potence-table td { border: none; padding: 1.5pt 5pt; font-family: "Cambria Math", "Times New Roman", serif; }
+      table.potence-table td.pot-left { text-align: right; border-right: 1pt solid #000000; }
+      table.potence-table td.pot-divisor { text-align: left; border-bottom: 1pt solid #000000; font-weight: bold; }
+      table.potence-table td.pot-quotient { text-align: left; font-weight: bold; }
+      .potence-sub { border-bottom: 0.75pt solid #000000; }
       .reflection-box { border: 1pt solid #000000; padding: 6pt 8pt; margin-top: 10pt; }
       .signature-table { width: 100%; border: none; margin-top: 14pt; text-align: center; }
       .signature-table td { border: none; width: 50%; text-align: center; vertical-align: top; }
     `;
+
+    const customFilename = pageEl.getAttribute('data-filename') || 'កិច្ចតែងការបង្រៀនគណិតវិទ្យា_5E.doc';
 
     const docHtml =
       '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
@@ -126,7 +144,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'ទម្រង់កិច្ចតែងការបង្រៀនគណិតវិទ្យា_5E.doc';
+    link.download = customFilename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
